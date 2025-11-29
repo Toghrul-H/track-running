@@ -5,22 +5,22 @@ class Program
 {
     static void Main()
     {
-        int stnum = int.Parse(Console.ReadLine());
-        int[] geton = new int[stnum];
-        int[] getoff = new int[stnum];
+        int weeks = int.Parse(Console.ReadLine());
+        int laps = int.Parse(Console.ReadLine());
 
-        // Read input rows
-        for (int i = 0; i < stnum; i++)
+        int[][] lapTimes = new int[weeks][];
+        for (int i = 0; i < weeks; i++)
         {
-            string[] row = Console.ReadLine().Split(" ");
-            geton[i] = int.Parse(row[0]);
-            getoff[i] = int.Parse(row[1]);
+            lapTimes[i] = Console.ReadLine()
+                                 .Split(" ")
+                                 .Select(int.Parse)
+                                 .ToArray();
         }
 
         // PRE-condition check
-        bool invalid = stnum < 1 || stnum > 100
-                       || geton.Any(x => x < 0 || x > 50)
-                       || getoff.Any(x => x < 0 || x > 50);
+        bool invalid = weeks < 1 || weeks > 10
+                       || laps < 1 || laps > 10
+                       || lapTimes.Any(week => week.Any(t => t < 30 || t > 60));
 
         if (invalid)
         {
@@ -28,12 +28,20 @@ class Program
             return;
         }
 
-        // LINQ calculations
-        int sumpsngr = getoff.Sum();
-        int index = Array.IndexOf(geton, geton.Max()) + 1;
+        // Decision-All Pattern
+        bool isImproving = true;
+        for (int i = 1; i < weeks; i++)
+        {
+            int previousTotal = lapTimes[i - 1].Sum();
+            int currentTotal = lapTimes[i].Sum();
 
-        // Output
-        Console.WriteLine(sumpsngr);
-        Console.WriteLine(index);
+            if (!(currentTotal < previousTotal))
+            {
+                isImproving = false;
+                break;
+            }
+        }
+
+        Console.WriteLine(isImproving.ToString().ToLower());
     }
 }
